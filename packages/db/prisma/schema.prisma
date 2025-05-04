@@ -1,0 +1,57 @@
+datasource db {
+  provider = "sqlserver"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id        String    @id @default(uuid())
+  name      String
+  email     String    @unique
+  role      String
+  enrollments Enrollment[]
+}
+
+model Course {
+  id          Int       @id @default(autoincrement())
+  title       String
+  description String?
+  isPublished Boolean   @default(false)
+  modules     Module[]
+  enrollments Enrollment[]
+}
+
+model Module {
+  id         Int     @id @default(autoincrement())
+  course     Course  @relation(fields: [courseId], references: [id])
+  courseId   Int
+  title      String
+  content    String?
+  orderIndex Int     @default(0)
+  progresses Progress[]
+}
+
+model Enrollment {
+  user      User   @relation(fields: [userId], references: [id])
+  userId    String
+  course    Course @relation(fields: [courseId], references: [id])
+  courseId  Int
+  enrolledAt DateTime @default(now())
+
+  @@id([userId, courseId])
+}
+
+model Progress {
+  user       User   @relation(fields: [userId], references: [id])
+  userId     String
+  module     Module @relation(fields: [moduleId], references: [id])
+  moduleId   Int
+  status     String
+  score      Float?
+  updatedAt  DateTime @updatedAt
+
+  @@id([userId, moduleId])
+} 

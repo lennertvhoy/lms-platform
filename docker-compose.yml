@@ -1,0 +1,14 @@
+version: '3.8'
+services:
+  app:
+    image: mcr.microsoft.com/vscode/devcontainers/javascript-node:0-18
+    volumes:
+      - .:/workspace:cached
+    command: sleep infinity
+  mssql:
+    image: mcr.microsoft.com/azure-sql-edge
+    environment:
+      ACCEPT_EULA: 'Y'
+      MSSQL_SA_PASSWORD: 'YourStrong!Passw0rd'
+    ports:
+      - '1433:1433' 

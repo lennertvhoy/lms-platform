@@ -1,0 +1,41 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      mssql:
+        image: mcr.microsoft.com/azure-sql-edge
+        env:
+          ACCEPT_EULA: Y
+          MSSQL_SA_PASSWORD: YourStrong!Passw0rd
+        ports:
+          - 1433:1433
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      - name: Install all dependencies
+        run: npm install
+      - name: Setup Prisma and DB
+        working-directory: packages/db
+        run: |
+          npm install
+          npx prisma migrate deploy
+      - name: Lint & test Functions
+        working-directory: api/functions
+        run: |
+          npm install
+          npm run lint
+      - name: Lint & test Frontend
+        working-directory: apps/portal
+        run: |
+          npm install
+          npm run lint 

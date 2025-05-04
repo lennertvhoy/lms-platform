@@ -1,0 +1,50 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Deploy Infrastructure (Bicep)
+        run: |
+          az group create --name ${{ secrets.RESOURCE_GROUP }} --location ${{ secrets.AZURE_REGION }}
+          az deployment group create \
+            --resource-group ${{ secrets.RESOURCE_GROUP }} \
+            --template-file infra/main.bicep \
+            --parameters \
+                sqlAdminUsername=${{ secrets.SQL_ADMIN }} \
+                sqlAdminPassword=${{ secrets.SQL_PASSWORD }}
+
+      - name: Install Node.js dependencies
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      - run: npm install
+
+      - name: Publish Azure Functions
+        run: |
+          pushd api/functions
+          npm run build || true
+          func azure functionapp publish ${{ secrets.FUNCTION_APP_NAME }} --typescript
+          popd
+
+      - name: Deploy Static Web App
+        uses: Azure/static-web-apps-deploy@v1
+        with:
+          azure_static_web_apps_api_token: ${{ secrets.SWA_TOKEN }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          action: upload
+          app_location: 'apps/portal'
+          api_location: 'api/functions'
+          output_location: '.next' 

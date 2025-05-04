@@ -1,0 +1,16 @@
+{
+  "name": "lms-platform",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "api/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "npm --workspace=apps/portal run dev & npm --workspace=api/functions run start",
+    "build": "npm --workspace=apps/portal run build && npm --workspace=api/functions run build",
+    "deploy-infra": "bash ./scripts/deploy_infra.sh",
+    "install:prereqs:arch": "sudo pacman -Syu docker nodejs npm azure-cli azure-functions-core-tools-bin code --noconfirm && code --install-extension ms-vscode-remote.remote-containers"
+  }
+} 
