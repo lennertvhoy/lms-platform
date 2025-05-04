@@ -1,6 +1,6 @@
 {
   "name": "LMS Dev Container",
-  "dockerComposeFile": "docker-compose.yml",
+  "dockerComposeFile": ["../docker-compose.yml"],
   "service": "app",
   "workspaceFolder": "/workspace",
   "extensions": [
@@ -14,5 +14,5 @@
     "terminal.integrated.shell.linux": "/bin/bash"
   },
   "forwardPorts": [3000, 7071],
-  "postCreateCommand": "npm install --workspace=packages/db && npm install --workspace=apps/portal && npm install --workspace=api/functions"
+  "postCreateCommand": "npm install --workspace=packages/db && npm install --workspace=apps/portal && npm install --workspace=api/functions && npm install -g azure-functions-core-tools@4 --unsafe-perm true"
 } 

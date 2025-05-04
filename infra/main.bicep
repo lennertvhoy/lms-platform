@@ -18,7 +18,9 @@ param servicePlanSku string = 'P1v2'
 resource storageAccount 'Microsoft.Storage/storageAccounts@2022-09-01' = {
   name: '${resourcePrefix}sa'
   location: location
-  sku: { name: 'Standard_LRS' }
+  sku: {
+    name: 'Standard_LRS'
+  }
   kind: 'StorageV2'
 }
 
@@ -27,15 +29,23 @@ resource appInsights 'Microsoft.Insights/components@2020-02-02' = {
   name: '${resourcePrefix}-ai'
   location: location
   kind: 'web'
-  properties: { Application_Type: 'web' }
+  properties: {
+    Application_Type: 'web'
+  }
 }
 
 // App Service plan for Functions and Static Web
 resource servicePlan 'Microsoft.Web/serverfarms@2022-03-01' = {
   name: '${resourcePrefix}-plan'
   location: location
-  sku: { name: servicePlanSku; tier: 'PremiumV2'; capacity: 1 }
-  properties: { reserved: true }
+  sku: {
+    name: servicePlanSku
+    tier: 'PremiumV2'
+    capacity: 1
+  }
+  properties: {
+    reserved: true
+  }
 }
 
 // Function App
@@ -47,16 +57,36 @@ resource functionApp 'Microsoft.Web/sites@2022-03-01' = {
     serverFarmId: servicePlan.id
     siteConfig: {
       appSettings: [
-        { name: 'AzureWebJobsStorage'; value: storageAccount.properties.primaryEndpoints.blob }
-        { name: 'FUNCTIONS_WORKER_RUNTIME'; value: 'node' }
-        { name: 'DATABASE_URL'; value: '@Microsoft.KeyVault(VaultName=${keyVault.name};SecretName=SQL_PASSWORD)' }
-        { name: 'OPENAI_KEY'; value: '@Microsoft.KeyVault(VaultName=${keyVault.name};SecretName=OPENAI_KEY)' }
-        { name: 'OPENAI_ENDPOINT'; value: '@Microsoft.KeyVault(VaultName=${keyVault.name};SecretName=OPENAI_ENDPOINT)' }
-        { name: 'SEARCH_KEY'; value: '@Microsoft.KeyVault(VaultName=${keyVault.name};SecretName=SEARCH_KEY)' }
+        {
+          name: 'AzureWebJobsStorage'
+          value: storageAccount.properties.primaryEndpoints.blob
+        }
+        {
+          name: 'FUNCTIONS_WORKER_RUNTIME'
+          value: 'node'
+        }
+        {
+          name: 'DATABASE_URL'
+          value: '@Microsoft.KeyVault(VaultName=${keyVault.name};SecretName=SQL_PASSWORD)'
+        }
+        {
+          name: 'OPENAI_KEY'
+          value: '@Microsoft.KeyVault(VaultName=${keyVault.name};SecretName=OPENAI_KEY)'
+        }
+        {
+          name: 'OPENAI_ENDPOINT'
+          value: '@Microsoft.KeyVault(VaultName=${keyVault.name};SecretName=OPENAI_ENDPOINT)'
+        }
+        {
+          name: 'SEARCH_KEY'
+          value: '@Microsoft.KeyVault(VaultName=${keyVault.name};SecretName=SEARCH_KEY)'
+        }
       ]
     }
   }
-  identity: { type: 'SystemAssigned' }
+  identity: {
+    type: 'SystemAssigned'
+  }
 }
 
 // Python UpdateContent Function App
@@ -68,22 +98,38 @@ resource updateContentFunc 'Microsoft.Web/sites@2022-03-01' = {
     serverFarmId: servicePlan.id
     siteConfig: {
       appSettings: [
-        { name: 'FUNCTIONS_WORKER_RUNTIME'; value: 'python' }
-        { name: 'AzureWebJobsStorage'; value: storageAccount.properties.primaryEndpoints.blob }
-        { name: 'WEBSITE_RUN_FROM_PACKAGE'; value: '1' }
-        { name: 'DATABASE_URL'; value: '@Microsoft.KeyVault(VaultName=${keyVault.name};SecretName=SQL_PASSWORD)' }
+        {
+          name: 'FUNCTIONS_WORKER_RUNTIME'
+          value: 'python'
+        }
+        {
+          name: 'AzureWebJobsStorage'
+          value: storageAccount.properties.primaryEndpoints.blob
+        }
+        {
+          name: 'WEBSITE_RUN_FROM_PACKAGE'
+          value: '1'
+        }
+        {
+          name: 'DATABASE_URL'
+          value: '@Microsoft.KeyVault(VaultName=${keyVault.name};SecretName=SQL_PASSWORD)'
+        }
       ]
       linuxFxVersion: 'Python|3.9'
     }
   }
-  identity: { type: 'SystemAssigned' }
+  identity: {
+    type: 'SystemAssigned'
+  }
 }
 
 // Static Web App
 resource staticWeb 'Microsoft.Web/staticSites@2022-03-01' = {
   name: '${resourcePrefix}-swa'
   location: location
-  sku: { name: 'Free' }
+  sku: {
+    name: 'Free'
+  }
   properties: {
     repositoryUrl: 'https://github.com/your-org/lms-platform'
     branch: 'main'
@@ -111,7 +157,10 @@ resource sqlDb 'Microsoft.Sql/servers/databases@2022-02-01' = {
   name: '${resourcePrefix}-sqldb'
   parent: sqlServer
   properties: {
-    sku: { name: 'GP_Gen5_2'; tier: 'GeneralPurpose' }
+    sku: {
+      name: 'GP_Gen5_2'
+      tier: 'GeneralPurpose'
+    }
     maxSizeBytes: 2147483648
   }
 }
@@ -122,7 +171,10 @@ resource keyVault 'Microsoft.KeyVault/vaults@2022-07-01' = {
   location: location
   properties: {
     tenantId: subscription().tenantId
-    sku: { family: 'A'; name: 'standard' }
+    sku: {
+      family: 'A'
+      name: 'standard'
+    }
     accessPolicies: []
     enableSoftDelete: true
   }
@@ -131,4 +183,4 @@ resource keyVault 'Microsoft.KeyVault/vaults@2022-07-01' = {
 // Output important endpoints
 output functionEndpoint string = functionApp.properties.defaultHostName
 output sqlServerName string = sqlServer.name
-output storageAccountName string = storageAccount.name 
+output storageAccountName string = storageAccount.name
