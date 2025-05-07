@@ -58,11 +58,11 @@ On Azure:
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/<your-org>/lms-platform.git
+   git clone https://github.com/lennertvhoy/lms-platform.git
    cd lms-platform
    ```
 
-2. Open in VS Code and launch the Dev Container:
+2. Open in Cursor and launch the Dev Container:
    ```bash
    code .
    ```
@@ -214,7 +214,7 @@ All Azure resources are defined in `infra/main.bicep`:
 - **Storage Account** for blob storage
 - **App Service Plan** for Functions
 - **Function Apps** (Node & Python) with Managed Identities
-- **Static Web App** for Next.js front end
+- **Web App** (Next.js frontend) on App Service
 - **Azure SQL Server & Database**
 - **Key Vault** for secrets
 - **Application Insights** for telemetry
@@ -243,7 +243,7 @@ Defined under `.github/workflows`:
   - Deploy Bicep infra
   - Install dependencies
   - Publish Functions (`func azure functionapp publish`)
-  - Deploy Static Web App (`github/swa-deploy`)
+  - Build & deploy Next.js frontend to App Service (`azure/webapps-deploy@v2`)
 
 Ensure repository secrets are set:
 - `AZURE_CREDENTIALS`
@@ -267,6 +267,14 @@ Ensure repository secrets are set:
 3. **Secrets**: Add SQL connection string, OpenAI key, NextAuth secret, etc., to Key Vault.
 4. **Code**: Push to `main` and let GitHub Actions handle deployments.
 
+3. **Front-end:** build and deploy to App Service:
+   ```bash
+   cd apps/portal
+   npm install
+   npm run build
+   az webapp deploy --resource-group <RESOURCE_GROUP> --name <WEBAPP_NAME> --src-path .next
+   ```
+
 ---
 
 ## Contributing
@@ -285,3 +293,12 @@ Refer to [docs/Implementation_Guide.md](docs/Implementation_Guide.md) for archit
 ## License
 
 This project is licensed under the [MIT License](LICENSE).
+
+## Development Log
+
+- **Remote Container Launch Failure:** Fixed `dockerComposeFile` in `.devcontainer/devcontainer.json`.
+- **Next.js NetworkError Fetching API:** Updated environment configuration and rewrites in `next.config.js`.
+- **Wrong Container Context:** Use `docker-compose exec app bash` for Node shell.
+- **Working Directory Fix:** Added `working_dir: /workspace` to `docker-compose.yml`.
+- **Missing Azure Functions Core Tools:** Installed in `postCreateCommand` of dev container.
+- **Container Rebuild Recommendation:** Run **Remote-Containers: Rebuild Container** after devcontainer changes.

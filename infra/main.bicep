@@ -126,22 +126,27 @@ resource updateContentFunc 'Microsoft.Web/sites@2022-03-01' = {
   }
 }
 
-// Static Web App
-resource staticWeb 'Microsoft.Web/staticSites@2022-03-01' = {
-  name: '${resourcePrefix}-swa'
-  location: staticLocation
-  sku: {
-    name: 'Free'
-  }
+// Add Azure App Service Web App for Next.js frontend
+resource webApp 'Microsoft.Web/sites@2022-03-01' = {
+  name: '${resourcePrefix}-webapp'
+  location: location
+  kind: 'app,linux'
   properties: {
-    repositoryUrl: 'https://github.com/your-org/lms-platform'
-    branch: 'main'
-    buildProperties: {
-      appLocation: 'apps/portal'
-      apiLocation: 'api/functions'
-      outputLocation: '.next'
+    serverFarmId: servicePlan.id
+    siteConfig: {
+      linuxFxVersion: 'NODE|18-lts'
+      appSettings: [
+        {
+          name: 'NEXT_PUBLIC_API_URL'
+          value: 'https://${functionApp.properties.defaultHostName}/api'
+        }
+      ]
     }
   }
+  identity: {
+    type: 'SystemAssigned'
+  }
+  dependsOn: [ functionApp ]
 }
 
 // SQL Server
