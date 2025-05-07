@@ -2,7 +2,10 @@
 param resourcePrefix string = 'lms'
 
 @description('Azure region for deployment')
-param location string = resourceGroup().location
+param location string = 'northeurope'
+
+@description('Azure region for Static Web App deployment')
+param staticLocation string = 'westeurope'
 
 @description('Administrator login for SQL server')
 param sqlAdminUsername string
@@ -126,7 +129,7 @@ resource updateContentFunc 'Microsoft.Web/sites@2022-03-01' = {
 // Static Web App
 resource staticWeb 'Microsoft.Web/staticSites@2022-03-01' = {
   name: '${resourcePrefix}-swa'
-  location: location
+  location: staticLocation
   sku: {
     name: 'Free'
   }
@@ -142,7 +145,7 @@ resource staticWeb 'Microsoft.Web/staticSites@2022-03-01' = {
 }
 
 // SQL Server
-resource sqlServer 'Microsoft.Sql/servers@2022-02-01' = {
+resource sqlServer 'Microsoft.Sql/servers@2023-08-01' = {
   name: '${resourcePrefix}-sql'
   location: location
   properties: {
@@ -153,7 +156,7 @@ resource sqlServer 'Microsoft.Sql/servers@2022-02-01' = {
 }
 
 // SQL Database
-resource sqlDb 'Microsoft.Sql/servers/databases@2022-02-01' = {
+resource sqlDb 'Microsoft.Sql/servers/databases@2023-08-01' = {
   name: '${resourcePrefix}-sqldb'
   parent: sqlServer
   properties: {
@@ -167,7 +170,7 @@ resource sqlDb 'Microsoft.Sql/servers/databases@2022-02-01' = {
 
 // Key Vault
 resource keyVault 'Microsoft.KeyVault/vaults@2022-07-01' = {
-  name: '${resourcePrefix}-kv'
+  name: '${resourcePrefix}-kv-07052025'
   location: location
   properties: {
     tenantId: subscription().tenantId

@@ -19,11 +19,6 @@ echo "Deploying infrastructure to resource group '$RESOURCE_GROUP'..."
 az group create --name "$RESOURCE_GROUP" --location eastus2
 
 # Deploy Bicep
-az deployment group create \
-  --resource-group "$RESOURCE_GROUP" \
-  --template-file "$BICEP_FILE" \
-  --parameters \
-      sqlAdminUsername="sqladmin" \
-      sqlAdminPassword="YourStrongP@ssw0rd"
+az deployment group create --resource-group "$RESOURCE_GROUP" --template-file "$BICEP_FILE" --parameters sqlAdminUsername="sqladmin" sqlAdminPassword="YourStrongP@ssw0rd"
 
 echo "Infra deployment complete." 

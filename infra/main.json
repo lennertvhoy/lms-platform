@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.35.1.17967",
-      "templateHash": "3375983661099528501"
+      "templateHash": "11565127917071196178"
     }
   },
   "parameters": {
@@ -18,9 +18,16 @@
     },
     "location": {
       "type": "string",
-      "defaultValue": "[resourceGroup().location]",
+      "defaultValue": "northeurope",
       "metadata": {
         "description": "Azure region for deployment"
+      }
+    },
+    "staticLocation": {
+      "type": "string",
+      "defaultValue": "westeurope",
+      "metadata": {
+        "description": "Azure region for Static Web App deployment"
       }
     },
     "sqlAdminUsername": {
@@ -98,19 +105,19 @@
             },
             {
               "name": "DATABASE_URL",
-              "value": "[format('@Microsoft.KeyVault(VaultName={0};SecretName=SQL_PASSWORD)', format('{0}-kv', parameters('resourcePrefix')))]"
+              "value": "[format('@Microsoft.KeyVault(VaultName={0};SecretName=SQL_PASSWORD)', format('{0}-kv-0705202', parameters('resourcePrefix')))]"
             },
             {
               "name": "OPENAI_KEY",
-              "value": "[format('@Microsoft.KeyVault(VaultName={0};SecretName=OPENAI_KEY)', format('{0}-kv', parameters('resourcePrefix')))]"
+              "value": "[format('@Microsoft.KeyVault(VaultName={0};SecretName=OPENAI_KEY)', format('{0}-kv-0705202', parameters('resourcePrefix')))]"
             },
             {
               "name": "OPENAI_ENDPOINT",
-              "value": "[format('@Microsoft.KeyVault(VaultName={0};SecretName=OPENAI_ENDPOINT)', format('{0}-kv', parameters('resourcePrefix')))]"
+              "value": "[format('@Microsoft.KeyVault(VaultName={0};SecretName=OPENAI_ENDPOINT)', format('{0}-kv-0705202', parameters('resourcePrefix')))]"
             },
             {
               "name": "SEARCH_KEY",
-              "value": "[format('@Microsoft.KeyVault(VaultName={0};SecretName=SEARCH_KEY)', format('{0}-kv', parameters('resourcePrefix')))]"
+              "value": "[format('@Microsoft.KeyVault(VaultName={0};SecretName=SEARCH_KEY)', format('{0}-kv-0705202', parameters('resourcePrefix')))]"
             }
           ]
         }
@@ -119,7 +126,7 @@
         "type": "SystemAssigned"
       },
       "dependsOn": [
-        "[resourceId('Microsoft.KeyVault/vaults', format('{0}-kv', parameters('resourcePrefix')))]",
+        "[resourceId('Microsoft.KeyVault/vaults', format('{0}-kv-0705202', parameters('resourcePrefix')))]",
         "[resourceId('Microsoft.Web/serverfarms', format('{0}-plan', parameters('resourcePrefix')))]",
         "[resourceId('Microsoft.Storage/storageAccounts', format('{0}sa', parameters('resourcePrefix')))]"
       ]
@@ -148,7 +155,7 @@
             },
             {
               "name": "DATABASE_URL",
-              "value": "[format('@Microsoft.KeyVault(VaultName={0};SecretName=SQL_PASSWORD)', format('{0}-kv', parameters('resourcePrefix')))]"
+              "value": "[format('@Microsoft.KeyVault(VaultName={0};SecretName=SQL_PASSWORD)', format('{0}-kv-0705202', parameters('resourcePrefix')))]"
             }
           ],
           "linuxFxVersion": "Python|3.9"
@@ -158,7 +165,7 @@
         "type": "SystemAssigned"
       },
       "dependsOn": [
-        "[resourceId('Microsoft.KeyVault/vaults', format('{0}-kv', parameters('resourcePrefix')))]",
+        "[resourceId('Microsoft.KeyVault/vaults', format('{0}-kv-0705202', parameters('resourcePrefix')))]",
         "[resourceId('Microsoft.Web/serverfarms', format('{0}-plan', parameters('resourcePrefix')))]",
         "[resourceId('Microsoft.Storage/storageAccounts', format('{0}sa', parameters('resourcePrefix')))]"
       ]
@@ -167,7 +174,7 @@
       "type": "Microsoft.Web/staticSites",
       "apiVersion": "2022-03-01",
       "name": "[format('{0}-swa', parameters('resourcePrefix'))]",
-      "location": "[parameters('location')]",
+      "location": "[parameters('staticLocation')]",
       "sku": {
         "name": "Free"
       },
@@ -183,8 +190,8 @@
     },
     {
       "type": "Microsoft.Sql/servers",
-      "apiVersion": "2022-02-01",
-      "name": "[format('{0}-sql', parameters('resourcePrefix'))]",
+      "apiVersion": "2023-08-01",
+      "name": "[format('{0}-sql-02', parameters('resourcePrefix'))]",
       "location": "[parameters('location')]",
       "properties": {
         "administratorLogin": "[parameters('sqlAdminUsername')]",
@@ -194,8 +201,8 @@
     },
     {
       "type": "Microsoft.Sql/servers/databases",
-      "apiVersion": "2022-02-01",
-      "name": "[format('{0}/{1}', format('{0}-sql', parameters('resourcePrefix')), format('{0}-sqldb', parameters('resourcePrefix')))]",
+      "apiVersion": "2023-08-01",
+      "name": "[format('{0}/{1}', format('{0}-sql-02', parameters('resourcePrefix')), format('{0}-sqldb', parameters('resourcePrefix')))]",
       "properties": {
         "sku": {
           "name": "GP_Gen5_2",
@@ -204,13 +211,13 @@
         "maxSizeBytes": 2147483648
       },
       "dependsOn": [
-        "[resourceId('Microsoft.Sql/servers', format('{0}-sql', parameters('resourcePrefix')))]"
+        "[resourceId('Microsoft.Sql/servers', format('{0}-sql-02', parameters('resourcePrefix')))]"
       ]
     },
     {
       "type": "Microsoft.KeyVault/vaults",
       "apiVersion": "2022-07-01",
-      "name": "[format('{0}-kv', parameters('resourcePrefix'))]",
+      "name": "[format('{0}-kv-0705202', parameters('resourcePrefix'))]",
       "location": "[parameters('location')]",
       "properties": {
         "tenantId": "[subscription().tenantId]",
