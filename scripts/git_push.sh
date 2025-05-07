@@ -40,6 +40,12 @@ BRANCH=$(git rev-parse --abbrev-ref HEAD)
 
 echo "Pushing branch '$BRANCH' to origin..."
 # Push and set upstream if not already set
-git push -u origin "$BRANCH"
+if ! git push -u origin "$BRANCH"; then
+  echo "Error: Git push failed. Password authentication is no longer supported." >&2
+  echo "Please authenticate using SSH or GitHub CLI:" >&2
+  echo "  gh auth login" >&2
+  echo "Or switch remote to SSH: git remote set-url origin git@github.com:<USER>/<REPO>.git" >&2
+  exit 1
+fi
 
 echo "Done!" 

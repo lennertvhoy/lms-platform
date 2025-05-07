@@ -150,4 +150,14 @@ Then ran **Remote-Containers: Rebuild Container**.
 - Added detection for `Microsoft.Web/serverfarms` resources and used `az appservice plan delete` with error handling.
 - Wrapped generic `az resource delete` calls in `if` blocks to catch failures and log warnings instead of aborting the script.
 
+## 2025-05-17
+
+### 24. Contribute Script Stash Handling
+**User Query:** Feature branch checkout fails if there are local changes  
+**Action:** Updated `scripts/contribute.sh` to automatically stash any local changes before creating a feature branch and reapply them after checkout, preventing overwrite errors.
+
+### 25. Git Push Authentication Guidance
+**User Query:** `fatal: Authentication failed` due to removed password auth  
+**Action:** Enhanced `scripts/git_push.sh` to catch push failures and instruct the user to authenticate via SSH or the GitHub CLI (`gh auth login`) when HTTP password auth is not available.
+
 *End of development log.* 

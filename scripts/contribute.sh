@@ -19,8 +19,23 @@ git fetch origin
 # Prompt for branch name
 read -p "Enter your feature branch name (e.g. feature/my-change): " BRANCH
 
+# Stash local changes to avoid overwrite
+if [ -n "$(git status --porcelain)" ]; then
+  echo "Stashing local changes..."
+  git stash push -u -m "pre-$BRANCH-stash" || true
+  STASHED=1
+else
+  STASHED=0
+fi
+
 # Create and check out branch off main
 git checkout origin/main -b "$BRANCH"
+
+# Apply stashed changes, if any
+if [ "${STASHED:-0}" -eq 1 ]; then
+  echo "Applying stashed changes to branch $BRANCH..."
+  git stash pop || true
+fi
 
 echo "Branch '$BRANCH' created and checked out."
 echo "Make your changes, then commit and push:"
