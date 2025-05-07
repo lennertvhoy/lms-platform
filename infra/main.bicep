@@ -2,10 +2,8 @@
 param resourcePrefix string = 'lms'
 
 @description('Azure region for deployment')
+@minLength(3)
 param location string = 'northeurope'
-
-@description('Azure region for Static Web App deployment')
-param staticLocation string = 'westeurope'
 
 @description('Administrator login for SQL server')
 param sqlAdminUsername string
@@ -146,7 +144,6 @@ resource webApp 'Microsoft.Web/sites@2022-03-01' = {
   identity: {
     type: 'SystemAssigned'
   }
-  dependsOn: [ functionApp ]
 }
 
 // SQL Server
@@ -164,18 +161,19 @@ resource sqlServer 'Microsoft.Sql/servers@2023-08-01' = {
 resource sqlDb 'Microsoft.Sql/servers/databases@2023-08-01' = {
   name: '${resourcePrefix}-sqldb'
   parent: sqlServer
+  location: location
+  sku: {
+    name: 'GP_Gen5_2'
+    tier: 'GeneralPurpose'
+  }
   properties: {
-    sku: {
-      name: 'GP_Gen5_2'
-      tier: 'GeneralPurpose'
-    }
     maxSizeBytes: 2147483648
   }
 }
 
 // Key Vault
 resource keyVault 'Microsoft.KeyVault/vaults@2022-07-01' = {
-  name: '${resourcePrefix}-kv-07052025'
+  name: '${resourcePrefix}-kv-${uniqueString(resourceGroup().id)}'
   location: location
   properties: {
     tenantId: subscription().tenantId
@@ -192,3 +190,4 @@ resource keyVault 'Microsoft.KeyVault/vaults@2022-07-01' = {
 output functionEndpoint string = functionApp.properties.defaultHostName
 output sqlServerName string = sqlServer.name
 output storageAccountName string = storageAccount.name
+output keyVaultName string = keyVault.name

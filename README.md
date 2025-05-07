@@ -41,10 +41,7 @@ This monorepo delivers a full-stack LMS solution featuring:
 Before you begin, ensure you have the following installed:
 
 - **Docker** (for Dev Container & Azure SQL Edge)
-- **Visual Studio Code** + Remote - Containers extension
-- **Node.js 18 LTS** and **npm**
-- **Azure CLI**
-- **Azure Functions Core Tools** (v4)
+- **Cursor** + Remote - Containers extension
 
 On Azure:
 
@@ -219,11 +216,17 @@ All Azure resources are defined in `infra/main.bicep`:
 - **Key Vault** for secrets
 - **Application Insights** for telemetry
 
-Use the deployment script:
+Use the infrastructure deployment helper script:
 ```bash
-npm run deploy-infra
-``` 
-It logs in, creates or updates the resource group, and applies the Bicep template.
+./scripts/deploy_bicep.sh [RESOURCE_GROUP] [LOCATION] [PARAMETERS_FILE] [SQL_ADMIN_USER] [SQL_ADMIN_PASSWORD]
+```
+This logs in (if needed), creates or updates the resource group, and applies the Bicep template.
+
+To tear down or manage resources interactively:
+```bash
+./scripts/manage_infra.sh
+```
+This lists available resource groups, lets you select resources to delete, deletes the group, and purges Key Vaults.
 
 ---
 
@@ -249,7 +252,7 @@ Ensure repository secrets are set:
 - `AZURE_CREDENTIALS`
 - `RESOURCE_GROUP`, `AZURE_REGION`
 - `SQL_ADMIN`, `SQL_PASSWORD`
-- `FUNCTION_APP_NAME`, `SWA_TOKEN`, `NEXTAUTH_SECRET`
+- `FUNCTION_APP_NAME`, `WEBAPP_NAME`, `AZURE_WEBAPP_PUBLISH_PROFILE`, `NEXTAUTH_SECRET`
 
 ---
 
@@ -260,27 +263,32 @@ Ensure repository secrets are set:
    az login
    az account set --subscription "<SUBSCRIPTION_ID>"
    ```
-2. **Infra**:
+2. **Infrastructure Deployment**:
    ```bash
-   npm run deploy-infra
+   ./scripts/deploy_bicep.sh
    ```
 3. **Secrets**: Add SQL connection string, OpenAI key, NextAuth secret, etc., to Key Vault.
-4. **Code**: Push to `main` and let GitHub Actions handle deployments.
-
-3. **Front-end:** build and deploy to App Service:
+4. **Front-end Deployment**:
    ```bash
    cd apps/portal
    npm install
    npm run build
    az webapp deploy --resource-group <RESOURCE_GROUP> --name <WEBAPP_NAME> --src-path .next
    ```
+5. **Cleanup (Optional)**:
+   ```bash
+   ./scripts/manage_infra.sh
+   ```
 
 ---
 
 ## Contributing
 
-We welcome contributions! Please:
-
+We welcome contributions! You can use our helper script or follow the manual workflow:
+```bash
+./scripts/contribute.sh
+```
+Alternatively, manually:
 1. Fork the repository.
 2. Create a feature branch: `git checkout -b feature/awesome-feature`.
 3. Commit your changes and run existing tests and linters.
