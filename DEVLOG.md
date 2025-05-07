@@ -138,4 +138,16 @@ Then ran **Remote-Containers: Rebuild Container**.
 **User Query:** remove_infra.sh fails to delete a Recovery Services vault with soft-deleted backup items  
 **Action:** Enhanced `scripts/remove_infra.sh` to detect `Microsoft.RecoveryServices/vaults` resources and delete them using `az backup vault delete`, with warnings if manual purge of backup items is required.
 
+## 2025-05-16
+
+### 22. Log Analytics Workspace Deletion Handling
+**User Query:** manage_infra.sh fails to delete OperationalInsights workspace resource  
+**Action:** Updated `scripts/manage_infra.sh` to detect `Microsoft.OperationalInsights/workspaces` resources and delete them with `az monitor log-analytics workspace delete`; falls back to generic `az resource delete` if needed.
+
+### 23. App Service Plan Deletion Handling and Safe-Mode Resource Delete
+**User Query:** manage_infra.sh fails to delete App Service plan and exits on errors  
+**Action:**
+- Added detection for `Microsoft.Web/serverfarms` resources and used `az appservice plan delete` with error handling.
+- Wrapped generic `az resource delete` calls in `if` blocks to catch failures and log warnings instead of aborting the script.
+
 *End of development log.* 
