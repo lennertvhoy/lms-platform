@@ -41,7 +41,7 @@ This monorepo delivers a full-stack LMS solution featuring:
 Before you begin, ensure you have the following installed:
 
 - **Docker** (for Dev Container & Azure SQL Edge)
-- **Visual Studio Code** + Remote - Containers extension
+- **Cursor** + Remote - Containers extension
 
 On Azure:
 
