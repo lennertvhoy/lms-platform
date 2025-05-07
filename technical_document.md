@@ -1,6 +1,6 @@
-Great. I’ll now create a comprehensive, step-by-step implementation plan to build a local-first, production-ready Python system (developed using Cursor and tested with GitHub Actions) for AI-powered training content monitoring and updates. This will use Azure OpenAI, with guidance for integrating Form Recognizer and Cognitive Search, fallback options if those aren’t available, and include cost-saving strategies. I’ll also guide you on how to prompt the Cursor AI assistant effectively for each development step.
+Great. I'll now create a comprehensive, step-by-step implementation plan to build a local-first, production-ready Python system (developed using Cursor and tested with GitHub Actions) for AI-powered training content monitoring and updates. This will use Azure OpenAI, with guidance for integrating Form Recognizer and Cognitive Search, fallback options if those aren't available, and include cost-saving strategies. I'll also guide you on how to prompt the Cursor AI assistant effectively for each development step.
 
-I’ll notify you once your tailored implementation plan is ready.
+I'll notify you once your tailored implementation plan is ready.
 
 
 # AI-Driven Training Content Monitoring & Update System – Implementation Guide
@@ -24,19 +24,19 @@ Each section below provides step-by-step guidance, code snippets, and prompt exa
 
 ## 1. Local Development Workflow with Cursor AI
 
-Developing with [Cursor](https://cursor.so/) (an AI-assisted code editor) can dramatically speed up coding. In fact, many developers report that they “barely type code anymore—he just types into the agent box in Cursor” to describe functionality, and the AI writes the code. To maximize Cursor’s utility:
+Developing with [Cursor](https://cursor.so/) (an AI-assisted code editor) can dramatically speed up coding. In fact, many developers report that they "barely type code anymore—he just types into the agent box in Cursor" to describe functionality, and the AI writes the code. To maximize Cursor's utility:
 
 * **Setup Cursor on Linux:** Ensure you have Cursor installed on your Linux environment (Cursor supports Linux). Open your project folder in Cursor.
-* **Leverage Natural Language Prompts:** Describe what you want in plain English in Cursor’s prompt box. For example:
-  **Prompt:** *“Create a Python function that takes a PDF file path and returns all text content. Use Azure Form Recognizer if available; otherwise use a PDF library.”*
+* **Leverage Natural Language Prompts:** Describe what you want in plain English in Cursor's prompt box. For example:
+  **Prompt:** *"Create a Python function that takes a PDF file path and returns all text content. Use Azure Form Recognizer if available; otherwise use a PDF library."*
   Cursor will generate an initial implementation based on this prompt.
-* **Enable “YOLO” Mode for Auto-Debugging:** In Cursor’s settings, turn on YOLO mode (if available) to let it run and test code as it writes. This allows Cursor to execute commands like running tests or linters automatically. With YOLO mode, Cursor can iterate until code passes tests, effectively doing test-driven development by itself.
+* **Enable "YOLO" Mode for Auto-Debugging:** In Cursor's settings, turn on YOLO mode (if available) to let it run and test code as it writes. This allows Cursor to execute commands like running tests or linters automatically. With YOLO mode, Cursor can iterate until code passes tests, effectively doing test-driven development by itself.
 
-  * *Tip:* Provide a prompt that instructs the AI to write tests first. For example: **“Write tests for the content extraction module, then implement the module until all tests pass.”** This way Cursor ensures the code is correct by verifying against tests.
+  * *Tip:* Provide a prompt that instructs the AI to write tests first. For example: **"Write tests for the content extraction module, then implement the module until all tests pass."** This way Cursor ensures the code is correct by verifying against tests.
 * **Interactive Debugging:** If code fails or throws an error, copy the error message and ask Cursor to fix it. For example:
-  **Prompt:** *“The function is raising a FileNotFoundError for valid paths – add code to ensure the file exists and handle paths correctly.”*
+  **Prompt:** *"The function is raising a FileNotFoundError for valid paths – add code to ensure the file exists and handle paths correctly."*
   Cursor will modify the code to address the issue.
-* **Incremental Development:** Tackle one component at a time (e.g., first the PDF text extraction, then the OpenAI analysis). Use Cursor’s agent to generate each function or class, and test it immediately.
+* **Incremental Development:** Tackle one component at a time (e.g., first the PDF text extraction, then the OpenAI analysis). Use Cursor's agent to generate each function or class, and test it immediately.
 * **Code Block Copy-Paste:** All code snippets in this guide are provided in Markdown triple-backtick blocks for easy copy-paste into Cursor or your editor.
 
 By using Cursor effectively, a solo developer can achieve \~80% of code implementation through AI suggestions, focusing manual effort on guiding the AI and integrating components.
@@ -143,7 +143,7 @@ Azure Cognitive Search can index content and enable semantic search or retrieval
 * **Usage in Analysis**: If the AI needs up-to-date context or you want to verify facts, you can query the index. For example, use embeddings to find related info or simply search by keywords (like a newer version number) and feed that into the OpenAI prompt. *Note:* This is an advanced step; an alternative is to manually supply known current facts in the prompt if Cognitive Search is not used.
 * **Fallback**: If Cognitive Search is not available, the pipeline can still function — we will rely on the content itself and any manual context for analysis. (Azure Search is mainly beneficial for augmenting the AI with external knowledge or quickly locating content by topic.)
 
-**Note:** Using Azure Cognitive Search for retrieval is in line with Azure’s recommended approach for grounding large data with GPT models. If you have a large knowledge base of current facts or references, consider integrating it so the AI can retrieve relevant info at analysis time.
+**Note:** Using Azure Cognitive Search for retrieval is in line with Azure's recommended approach for grounding large data with GPT models. If you have a large knowledge base of current facts or references, consider integrating it so the AI can retrieve relevant info at analysis time.
 
 ## 3. Content Ingestion and Text Extraction Pipeline
 
@@ -242,7 +242,7 @@ def extract_text_from_pdf(file_path: str) -> str:
 ```
 
 * In the above code, `client` would be an instance of Azure Form Recognizer `DocumentIntelligenceClient` as shown earlier (set `client_available` accordingly, e.g., based on environment variable presence).
-* The fallback uses PyMuPDF: it opens the PDF and iterates through pages to get text. PyMuPDF’s `page.get_text()` extracts text content effectively.
+* The fallback uses PyMuPDF: it opens the PDF and iterates through pages to get text. PyMuPDF's `page.get_text()` extracts text content effectively.
 * **Installation for fallback**: `pip install pymupdf`. (Note: import name is `fitz`). This works on Linux as long as dependencies (MuPDF) are satisfied, which pip usually handles.
 * **OCR for Scans**: If PDFs are images (scanned), PyMuPDF will not extract text (it only extracts embedded text). In such cases, if Form Recognizer is unavailable, you might integrate an OCR like Tesseract as a last resort. For example, using `pytesseract` with `wand` or OpenCV to image-render each page. This is more complex and can be added if needed.
 
@@ -251,7 +251,7 @@ def extract_text_from_pdf(file_path: str) -> str:
 For video files, we need to convert audio speech to text:
 
 * **Azure Cognitive Services (Speech to Text)**: If you have an Azure Speech resource, you can use it for high-quality transcription. This requires the Azure Speech SDK (`pip install azure-cognitiveservices-speech`) and using your speech key and region. Azure Speech can directly take an audio (or video file path) and produce a transcript.
-* **Open Source/Local (Whisper)**: A cost-effective alternative is OpenAI’s Whisper model, which is open-source. You can install `whisper` (`pip install openai-whisper`) and it will run locally (using PyTorch). Whisper’s base model can transcribe with decent accuracy. This avoids API costs for transcription, at the expense of using local CPU/GPU.
+* **Open Source/Local (Whisper)**: A cost-effective alternative is OpenAI's Whisper model, which is open-source. You can install `whisper` (`pip install openai-whisper`) and it will run locally (using PyTorch). Whisper's base model can transcribe with decent accuracy. This avoids API costs for transcription, at the expense of using local CPU/GPU.
 * **Process**:
 
   1. Extract audio from video: e.g., using `ffmpeg` CLI or `moviepy` in Python. For example:
@@ -288,7 +288,7 @@ For video files, we need to convert audio speech to text:
 * **Timecodes**: If you want to identify *where* in the video the outdated info is, you might need to keep track of timestamps. Both Azure and Whisper can provide word timing. This can be an enhancement: store transcript with timestamps, so later if AI flags something in text, you know the time in video.
 * **Output**: The transcript text can be treated like any document text for analysis. Save it in a variable or file.
 
-After these steps, we will have for each content item an **extracted text** (string). It’s helpful to store these in a structured way, for example a dictionary: `content_texts = { "module1_intro": "<text>", "reference": "<text>", "demo_video": "<text>" }`. Also consider saving the extracted text to disk (for example, in a `extracted/` folder as `.txt` files) to reuse and to have a record of the exact text analyzed.
+After these steps, we will have for each content item an **extracted text** (string). It's helpful to store these in a structured way, for example a dictionary: `content_texts = { "module1_intro": "<text>", "reference": "<text>", "demo_video": "<text>" }`. Also consider saving the extracted text to disk (for example, in a `extracted/` folder as `.txt` files) to reuse and to have a record of the exact text analyzed.
 
 ## 4. Integration with Azure OpenAI for Content Analysis
 
@@ -304,7 +304,7 @@ We will use Azure OpenAI (GPT models) to perform this analysis. This involves de
 
 We want the AI to act as a content reviewer. A good approach is to ask for a structured output, so that it's easier to process. For example, ask the model to produce a JSON or Markdown list of findings. An example prompt could be:
 
-**System Message:** *“You are an expert e-learning content editor. You will review training content and identify needed updates.”* (This sets the AI role.)
+**System Message:** *"You are an expert e-learning content editor. You will review training content and identify needed updates."* (This sets the AI role.)
 
 **User Prompt Template:**
 
@@ -331,14 +331,14 @@ This prompt does the following:
   * `suggestion` (the recommended fix).
 * Encloses the content in a triple-quoted block to clearly delineate it.
 
-We include the year or context ("in 2025") so the model knows to judge facts relative to that time. If you have specific current facts that the model might not know (since GPT-4’s training might cut off at 2021), you can insert them before the content as part of the system or user message context. For example: *“(Context: The current software version is 5.0 released in 2025, and policy ABC was updated in 2024)… Now analyze the content.”* This helps the model spot certain outdated references.
+We include the year or context ("in 2025") so the model knows to judge facts relative to that time. If you have specific current facts that the model might not know (since GPT-4's training might cut off at 2021), you can insert them before the content as part of the system or user message context. For example: *"(Context: The current software version is 5.0 released in 2025, and policy ABC was updated in 2024)… Now analyze the content."* This helps the model spot certain outdated references.
 
 ### 4.2 Choosing Models (GPT-3.5 vs GPT-4)
 
 For cost efficiency:
 
-* Use **GPT-3.5-Turbo** for initial analysis on each content piece. It’s fast and cheap, and often sufficient for straightforward tasks. It can produce the JSON of findings. You might run GPT-3.5 on all documents first.
-* Use **GPT-4** selectively for deeper analysis or validation. For example, if a piece of content is complex or critical, or if GPT-3.5’s output seems suspect, send the content (or the findings) to GPT-4 for a second opinion or more refined suggestions. This aligns with best practices of using powerful models only when needed (older/cheaper models for simpler tasks, saving money).
+* Use **GPT-3.5-Turbo** for initial analysis on each content piece. It's fast and cheap, and often sufficient for straightforward tasks. It can produce the JSON of findings. You might run GPT-3.5 on all documents first.
+* Use **GPT-4** selectively for deeper analysis or validation. For example, if a piece of content is complex or critical, or if GPT-3.5's output seems suspect, send the content (or the findings) to GPT-4 for a second opinion or more refined suggestions. This aligns with best practices of using powerful models only when needed (older/cheaper models for simpler tasks, saving money).
 * Alternatively, use GPT-4 for the parts identified by GPT-3.5 as problematic, to generate better rewrite suggestions for those parts (since re-writing clarity might benefit from GPT-4's fluency).
 
 ### 4.3 Implementing the Analysis in Code
@@ -381,7 +381,7 @@ Content:
 
 A few notes from the above code:
 
-* We set `temperature=0` for consistency (so it’s less likely to deviate in format or content).
+* We set `temperature=0` for consistency (so it's less likely to deviate in format or content).
 * We attempt to parse the JSON. If parsing fails (sometimes the model might include extra text), you could either:
 
   * Use a regex to find the JSON snippet in the answer,
@@ -410,7 +410,7 @@ Automatic suggestions are valuable, but **human review is critical** to ensure a
 For each content item, create a report (could be a Markdown or HTML file) that shows:
 
 * The original excerpt (or a reference to it) that needs change.
-* The AI’s suggested correction or improvement.
+* The AI's suggested correction or improvement.
 * A field for human decision (approve/reject/edit).
 
 A simple format is to use Markdown with a checklist for each suggestion:
@@ -448,7 +448,7 @@ For a solo developer, editing a Markdown or using an interactive prompt is a mat
 
 ### 5.2 Approval History Tracking
 
-It’s important to keep an **audit trail** of what changes were approved and when, especially for a production system:
+It's important to keep an **audit trail** of what changes were approved and when, especially for a production system:
 
 * Maintain a simple **log file or database** (e.g., a CSV or SQLite DB). Each approved suggestion becomes a record with fields: Content ID, Issue type, Original excerpt, New approved text, Reviewer, Date.
 * Example CSV line:
@@ -505,15 +505,15 @@ For text-based formats (HTML, markdown, etc.), you can apply changes via string 
   ```
 
   This simple approach finds the first occurrence of the snippet and replaces it. Make sure `original_snippet` is exactly as in the file (the AI excerpt might need slight adjustment to match raw text).
-* **PDF**: Direct text replacement in PDF binary is not straightforward. If the source of the PDF is a Word or HTML, it's better to update that source and regenerate the PDF. If not, you might leave PDFs unchanged and handle them manually. Alternatively, for minor text changes in PDFs, a library like PyMuPDF can sometimes replace text objects, but it’s complex and can mess up formatting. The recommended approach: treat PDFs as needing manual update or re-export from updated source material.
-* **Video**: Similarly, you cannot auto-edit a video to change spoken words. The best you can do is perhaps add a caption or on-screen text correction, but more realistically, you will mark the video for re-recording or editing by a media specialist. The AI’s output for videos will primarily serve as a script of what to change. You can store that info (e.g., "At 2:15, mention latest policy date...") for whoever will handle video updates. Ensure to version control any new transcript or script files.
+* **PDF**: Direct text replacement in PDF binary is not straightforward. If the source of the PDF is a Word or HTML, it's better to update that source and regenerate the PDF. If not, you might leave PDFs unchanged and handle them manually. Alternatively, for minor text changes in PDFs, a library like PyMuPDF can sometimes replace text objects, but it's complex and can mess up formatting. The recommended approach: treat PDFs as needing manual update or re-export from updated source material.
+* **Video**: Similarly, you cannot auto-edit a video to change spoken words. The best you can do is perhaps add a caption or on-screen text correction, but more realistically, you will mark the video for re-recording or editing by a media specialist. The AI's output for videos will primarily serve as a script of what to change. You can store that info (e.g., "At 2:15, mention latest policy date...") for whoever will handle video updates. Ensure to version control any new transcript or script files.
 
 ### 6.3 Verify and Save Changes
 
 After applying changes:
 
 * **Verify**: You can re-run the content extraction on the updated file and even run it through the AI again to ensure the issue is resolved and no new issues were introduced (optional sanity check).
-* **Save**: Commit the changes to Git. Each content file changed will be part of a commit. Write a meaningful commit message, e.g., *"Update module1\_intro: corrected version number and clarified summary (AI-assisted)"*.
+* **Save**: Commit the changes to Git. Each content file changed will be part of a commit. Write a meaningful commit message, e.g., *"Update module1_intro: corrected version number and clarified summary (AI-assisted)"*.
 * **Record in Log**: Add entries to the approval history log (from section 5.2) for each change applied, if you maintain a separate log.
 
 ### 6.4 Version Control Strategy
@@ -560,7 +560,7 @@ The code is organized into modules and a tests directory for unit tests.
 Even though the heavy lifting is by AI, try to write tests for deterministic parts:
 
 * **Ingestion tests**: e.g., create a sample HTML/PDF in tests and assert that `extract_text_from_html` returns expected strings, or that `extract_text_from_pdf` (with a known simple PDF) works.
-* **Analysis tests**: You can mock the OpenAI API (to not call the real service during CI). For instance, use `unittest.mock` to patch `openai.ChatCompletion.create` to return a preset response (so tests don’t incur cost or require keys). Then test that `analyze_content_with_gpt` correctly parses the JSON.
+* **Analysis tests**: You can mock the OpenAI API (to not call the real service during CI). For instance, use `unittest.mock` to patch `openai.ChatCompletion.create` to return a preset response (so tests don't incur cost or require keys). Then test that `analyze_content_with_gpt` correctly parses the JSON.
 * **Update tests**: If you have a small HTML sample and a planned change, test that `apply_change_to_html` actually updates the HTML string.
 
 ### 7.3 Linting and Code Style
@@ -603,7 +603,7 @@ jobs:
         run: pytest -q
 ```
 
-This workflow will check out the code, set up Python, install requirements, then run lint and tests. Ensure any sensitive keys (like OPENAI\_API\_KEY, etc.) are stored in GitHub repo *Secrets* and referenced via `${{ secrets.NAME }}`. If your tests mock external calls, you might not need real keys in CI at all.
+This workflow will check out the code, set up Python, install requirements, then run lint and tests. Ensure any sensitive keys (like OPENAI_API_KEY, etc.) are stored in GitHub repo *Secrets* and referenced via `${{ secrets.NAME }}`. If your tests mock external calls, you might not need real keys in CI at all.
 
 If you want to automate **deployment** as well (for example, deploy to an Azure Function or VM), you can add steps after tests to build and publish:
 
@@ -631,24 +631,24 @@ In the job steps, instead of running tests, you would run the actual pipeline sc
 
 For maintainability, consider packaging your code (even if just for yourself). A `setup.py` or using a modern pyproject (with Poetry or setuptools) can help manage dependencies and allow installing the tool easily on a server or new environment. This isn't strictly necessary, but treating it as a proper Python package can enforce good structure.
 
-Finally, monitor the CI results for failures. With tests and lint in place, you’ll catch many issues early. This ensures your system remains **production-ready** as you evolve it.
+Finally, monitor the CI results for failures. With tests and lint in place, you'll catch many issues early. This ensures your system remains **production-ready** as you evolve it.
 
 ## 8. Cost Management Strategies
 
 Using GPT-based analysis and Azure services has cost implications. As a solo developer on a budget, implement strategies to control costs while still getting effective results:
 
-* **Selective Model Use:** As discussed, use GPT-4 only where its superior reasoning is truly needed. GPT-3.5 can handle a lot of analysis at a fraction of the price (GPT-3.5 is \~\$0.002 per 1K tokens vs GPT-4’s \$0.03+ per 1K tokens). OpenAI’s guidance suggests using older (cheaper) models for simpler tasks to save costs.
+* **Selective Model Use:** As discussed, use GPT-4 only where its superior reasoning is truly needed. GPT-3.5 can handle a lot of analysis at a fraction of the price (GPT-3.5 is \~\$0.002 per 1K tokens vs GPT-4's \$0.03+ per 1K tokens). OpenAI's guidance suggests using older (cheaper) models for simpler tasks to save costs.
 * **Batching Requests:** If you have many documents to analyze, consider batching them. Azure OpenAI offers a Batch API for offline processing which can significantly cut costs (up to 50% reduction) for large volumes. This API lets you submit a bunch of prompts and get results with a slower turnaround, at lower price. If using the standard API, you could also batch multiple small documents in one prompt (though be careful to clearly separate them and the output).
-* **Asynchronous Processing:** Utilize Python async or multi-threading to send multiple requests concurrently. This doesn’t reduce per-call cost, but it can reduce total runtime (important if you are on a time-limited environment or simply to get results faster, which can indirectly save money if you’re paying for compute time elsewhere).
+* **Asynchronous Processing:** Utilize Python async or multi-threading to send multiple requests concurrently. This doesn't reduce per-call cost, but it can reduce total runtime (important if you are on a time-limited environment or simply to get results faster, which can indirectly save money if you're paying for compute time elsewhere).
 * **Rate Limiting and Throttling:** Implement checks to not exceed your usage quotas unintentionally. For example, if analyzing hundreds of pages, maybe limit to N per hour to cap cost. Azure OpenAI can return an error if rate limit is hit; handle that gracefully (e.g., wait and retry).
-* **Monitoring Token Usage:** Log the tokens used by each OpenAI API call (the API returns usage info). This lets you track which operations are costliest. You might find, for instance, that a certain PDF’s analysis used an extreme number of tokens; you could then decide to summarize that PDF first or split it.
+* **Monitoring Token Usage:** Log the tokens used by each OpenAI API call (the API returns usage info). This lets you track which operations are costliest. You might find, for instance, that a certain PDF's analysis used an extreme number of tokens; you could then decide to summarize that PDF first or split it.
 * **Reduce Prompt Size:** The more content you feed in, the more tokens are consumed in the prompt. If some content is extremely large, you can **summarize it first** using a cheaper model, then have GPT-4 analyze the summary for issues. Or break content into sections and only scrutinize sections likely to have issues (maybe based on heuristic, like sections containing dates/numbers for "outdated" or particularly long sentences for "clarity"). Prompt engineering to be concise (e.g., do not include irrelevant parts of content, cut out obvious boilerplate) will save tokens.
-* **Temperature=0 for Fewer Retries:** A deterministic output (temperature 0) means if you re-run the same prompt you get the same result. This avoids paying twice for the same analysis accidentally. If you do need variety (e.g., to get alternative phrasings), you could intentionally vary it but that’s a conscious decision.
-* **Cache Results:** If the content hasn’t changed since the last run, you can reuse prior analysis. Store the AI findings for each content along with a hash of the content. On the next run, compute hash of the current content:
+* **Temperature=0 for Fewer Retries:** A deterministic output (temperature 0) means if you re-run the same prompt you get the same result. This avoids paying twice for the same analysis accidentally. If you do need variety (e.g., to get alternative phrasings), you could intentionally vary it but that's a conscious decision.
+* **Cache Results:** If the content hasn't changed since the last run, you can reuse prior analysis. Store the AI findings for each content along with a hash of the content. On the next run, compute hash of the current content:
 
-  * If hash matches previous, skip re-analysis (the content hasn’t changed, so previous suggestions still hold or have been applied).
+  * If hash matches previous, skip re-analysis (the content hasn't changed, so previous suggestions still hold or have been applied).
   * Only re-run analysis on new or changed content, or if there is a need to re-check due to new information (for example, a new year ticked over, so what was not outdated might now be).
-* **Cost Visibility:** Use Azure’s cost monitoring tools to set alerts for the OpenAI resource. If your usage starts exceeding a threshold, you get notified. This helps catch any runaway processes.
+* **Cost Visibility:** Use Azure's cost monitoring tools to set alerts for the OpenAI resource. If your usage starts exceeding a threshold, you get notified. This helps catch any runaway processes.
 * **Use Free Tiers where possible:** Azure Form Recognizer and Speech to Text have free tier quotas (e.g., Form Recognizer offers a certain number of pages free per month). Try to stay within those for development/testing.
 
 By combining these strategies, you keep the system efficient. For instance, you might find that you only need GPT-4 for 10% of the content (complex policy documents), and GPT-3.5 for the rest. That alone could cut costs dramatically while still maintaining quality results. Additionally, the batch processing option from OpenAI could be considered if you plan to do large periodic batch updates rather than real-time queries.
@@ -661,9 +661,9 @@ This structured approach turns the challenge of keeping training materials up-to
 
 By using AI wisely (with human oversight) and solid engineering practices, even a solo developer can maintain large sets of training content efficiently. Good luck with your implementation, and happy coding with Cursor!
 
-**Sources:** The approaches above were informed by best practices in AI-assisted development and content management, including using AI coding tools, Azure’s documentation for AI services, industry advice on maintaining training content, and cost-optimization techniques for OpenAI APIs.
+**Sources:** The approaches above were informed by best practices in AI-assisted development and content management, including using AI coding tools, Azure's documentation for AI services, industry advice on maintaining training content, and cost-optimization techniques for OpenAI APIs.
 
-Thanks for the details. I’ll look into how you can build an AI-enhanced system—integrated with TalentLMS and using Microsoft Copilot via Azure—that can continuously monitor, update, and improve your training content (HTML, PDFs, videos, presentations). I’ll identify tools, frameworks, and workflows that support this, especially ones suited for in-house customization and team updates.
+Thanks for the details. I'll look into how you can build an AI-enhanced system—integrated with TalentLMS and using Microsoft Copilot via Azure—that can continuously monitor, update, and improve your training content (HTML, PDFs, videos, presentations). I'll identify tools, frameworks, and workflows that support this, especially ones suited for in-house customization and team updates.
 
 I'll get back to you shortly with a practical and actionable setup.
 
@@ -683,13 +683,13 @@ By addressing these challenges, the team can keep learning content **current and
 
 ## Solution Overview & Architecture
 
-The proposed solution is a **custom “Content Copilot” system** that integrates TalentLMS with Azure AI services. It will continuously ingest course content, analyze it with AI for needed updates, and involve the team for validation. The high-level architecture consists of:
+The proposed solution is a **custom "Content Copilot" system** that integrates TalentLMS with Azure AI services. It will continuously ingest course content, analyze it with AI for needed updates, and involve the team for validation. The high-level architecture consists of:
 
-* **TalentLMS Integration:** Using TalentLMS’s REST API to extract course data and push updates. This provides programmatic access to all courses, units (lessons), files, etc., ensuring the AI has the latest content to review.
-* **Content Processing Pipeline:** An automated pipeline (e.g. scheduled Azure Function or Logic App) that retrieves content in various formats and converts it to text for analysis. PDFs and slides are parsed (using OCR or Azure Form Recognizer), and videos are transcribed (via Azure Video Indexer or Speech-to-Text). This pipeline “cracks and chunks” each content piece into text data that AI can easily analyze.
-* **AI Analysis & Revision (Azure OpenAI/Copilot):** An AI module (powered by Azure OpenAI GPT-4) evaluates the text for outdated info, language improvements, and accuracy. It can compare the content against up-to-date reference data (using web search or an internal knowledge base) to identify obsolete facts. The AI then generates suggestions: e.g. revised sentences, updated facts, corrected grammar. Critically, the AI’s responses are *grounded* in enterprise data – using Azure Cognitive Search or “OpenAI on Your Data” to ensure recommendations cite the latest information.
-* **Human-in-the-Loop & Update Application:** All AI-suggested changes are logged for the team. A user-friendly report (or interface) highlights what sections might be outdated and proposes new text. The team can approve or tweak these suggestions. Upon approval, the system uses the TalentLMS API to update the course content (e.g. replacing an HTML unit’s text or uploading a new PDF), thereby keeping the LMS in sync.
-* **Notification & Tracking:** The system sends clear notifications whenever content needs review or has been updated. For example, it can post a Microsoft Teams message or email summarizing “Course X has 3 suggested updates”. This ensures trainers are aware of changes and can communicate them (or schedule re-recording of videos if needed). All updates are tracked (with version history) to maintain accountability.
+* **TalentLMS Integration:** Using TalentLMS's REST API to extract course data and push updates. This provides programmatic access to all courses, units (lessons), files, etc., ensuring the AI has the latest content to review.
+* **Content Processing Pipeline:** An automated pipeline (e.g. scheduled Azure Function or Logic App) that retrieves content in various formats and converts it to text for analysis. PDFs and slides are parsed (using OCR or Azure Form Recognizer), and videos are transcribed (via Azure Video Indexer or Speech-to-Text). This pipeline "cracks and chunks" each content piece into text data that AI can easily analyze.
+* **AI Analysis & Revision (Azure OpenAI/Copilot):** An AI module (powered by Azure OpenAI GPT-4) evaluates the text for outdated info, language improvements, and accuracy. It can compare the content against up-to-date reference data (using web search or an internal knowledge base) to identify obsolete facts. The AI then generates suggestions: e.g. revised sentences, updated facts, corrected grammar. Critically, the AI's responses are *grounded* in enterprise data – using Azure Cognitive Search or "OpenAI on Your Data" to ensure recommendations cite the latest information.
+* **Human-in-the-Loop & Update Application:** All AI-suggested changes are logged for the team. A user-friendly report (or interface) highlights what sections might be outdated and proposes new text. The team can approve or tweak these suggestions. Upon approval, the system uses the TalentLMS API to update the course content (e.g. replacing an HTML unit's text or uploading a new PDF), thereby keeping the LMS in sync.
+* **Notification & Tracking:** The system sends clear notifications whenever content needs review or has been updated. For example, it can post a Microsoft Teams message or email summarizing "Course X has 3 suggested updates". This ensures trainers are aware of changes and can communicate them (or schedule re-recording of videos if needed). All updates are tracked (with version history) to maintain accountability.
 
 &#x20;*High-level architecture of the proposed solution.* **Step 1** (Ingestion): Content from TalentLMS is extracted (via API) and ingested into an AI-accessible index (after converting PDFs, slides, and videos to text). **Step 2** (Development & Orchestration): A custom application (using Azure Functions or a framework like Semantic Kernel) formulates prompts and retrieval queries for the AI model. **Step 3** (AI Inference & Copilot Logic): The Azure OpenAI model (GPT-4) analyzes content and, if asked to update, performs a retrieval of relevant data (e.g. latest info from Azure Cognitive Search or web) before generating responses. The pipeline then filters and ranks the AI suggestions, which are presented to the team for approval before applying updates.
 
@@ -697,13 +697,13 @@ The proposed solution is a **custom “Content Copilot” system** that integrat
 
 **TalentLMS API:** The first step is connecting to TalentLMS to pull all course content. TalentLMS offers a robust REST API covering courses, users, and learning units. With an API key from an admin account, the system can periodically:
 
-* **List Courses and Content:** Retrieve the list of courses and their units (lessons). Each unit has a type (e.g. “Content” for HTML/text, “File” for PDFs, “Video” for videos, etc.) along with identifiers and URLs. For example, a “Web content” unit might have an API endpoint that returns the HTML text or a URL to fetch it.
+* **List Courses and Content:** Retrieve the list of courses and their units (lessons). Each unit has a type (e.g. "Content" for HTML/text, "File" for PDFs, "Video" for videos, etc.) along with identifiers and URLs. For example, a "Web content" unit might have an API endpoint that returns the HTML text or a URL to fetch it.
 * **Fetch Unit Content:** For text-based units, the API can return the HTML or text content directly. File units (PDFs, PPTs) can be downloaded via the URL provided. Videos might be stored as files or links – the integration can download these or use their URL to feed into a transcription service.
 * **Update Content:** The API also allows updating course content. For instance, one can create or update a unit via API (TalentLMS supports POST/PUT calls for creating/editing units or courses). This means once the AI generates a revised HTML page or an updated PDF, the system can push that back to the LMS automatically. (If direct unit update via API is limited, an alternative is to use the API to replace a unit with a new one containing the updated content).
 
-Using the API ensures the solution stays in sync with the LMS. It also allows tagging or noting content (e.g. adding a custom field or note for “last reviewed by AI on YYYY-MM-DD”) if TalentLMS supports metadata, which can help with monitoring.
+Using the API ensures the solution stays in sync with the LMS. It also allows tagging or noting content (e.g. adding a custom field or note for "last reviewed by AI on YYYY-MM-DD") if TalentLMS supports metadata, which can help with monitoring.
 
-**Authentication & Security:** The integration will use secure API calls (HTTPS with the API key in the header) and respect rate limits. TalentLMS’s API has rate limiting and uses basic auth with the API key, so the pipeline will need to throttle requests when scanning many courses. All data remains within the company’s control, and the Azure environment can be configured to store any interim content securely (e.g. in Azure Blob Storage or an SQL database for analysis results).
+**Authentication & Security:** The integration will use secure API calls (HTTPS with the API key in the header) and respect rate limits. TalentLMS's API has rate limiting and uses basic auth with the API key, so the pipeline will need to throttle requests when scanning many courses. All data remains within the company's control, and the Azure environment can be configured to store any interim content securely (e.g. in Azure Blob Storage or an SQL database for analysis results).
 
 ## Content Processing Pipeline
 
@@ -711,60 +711,62 @@ Once the raw content is retrieved from TalentLMS, the next step is to **process 
 
 * **HTML/Text Units:** These are the simplest – the HTML can be stripped of markup to get plain text. The pipeline can also retain some structure (like headings) if needed for context. This text is passed to the AI analysis module directly.
 * **PDFs / Documents:** Utilize Azure Cognitive Services **Form Recognizer** (Document Intelligence) or PDF parsing libraries to extract text. Azure Form Recognizer can handle PDFs, scanned documents, and images, outputting the text with structure. This is useful for slides (PPT can be saved as PDF) or PDFs of articles. If the content includes images with text (like screenshots in a PDF), OCR ensures nothing is missed. All extracted text from each document is stored for analysis.
-* **Videos:** Use **Azure Video Indexer** to automatically transcribe videos. Video Indexer’s API can generate a transcript for each video and even identify key topics or keywords spoken. Alternatively, Azure Speech-to-Text can be used if Video Indexer is not available; the video audio is sent to the speech API to get a transcript. The transcript text is then treated like any other course text. (For long videos, transcripts can be segmented by timestamp or slide if the video is of a presentation, to help map updates later).
-* **Embedded Content/SCORM:** If some courses use SCORM packages or external links, the pipeline might need to handle those differently. For SCORM (which could be a zipped package of HTML/JS), one approach is to extract the text content from the SCO files. For external links (e.g. if a unit is just a link to an article), the system could fetch that URL’s content (with caution to respect robots.txt) to include in the analysis – or at least flag that an external resource is used and might need checking.
+* **Videos:** Use **Azure Video Indexer** to automatically transcribe videos. Video Indexer's API can generate a transcript for each video and even identify key topics or keywords spoken. Alternatively, Azure Speech-to-Text can be used if Video Indexer is not available; the video audio is sent to the speech API to get a transcript. The transcript text is then treated like any other course text. (For long videos, transcripts can be segmented by timestamp or slide if the video is of a presentation, to help map updates later).
+* **Embedded Content/SCORM:** If some courses use SCORM packages or external links, the pipeline might need to handle those differently. For SCORM (which could be a zipped package of HTML/JS), one approach is to extract the text content from the SCO files. For external links (e.g. if a unit is just a link to an article), the system could fetch that URL's content (with caution to respect robots.txt) to include in the analysis – or at least flag that an external resource is used and might need checking.
 
-After extraction, **content normalization** occurs. This might involve splitting content into logical sections (e.g. by heading or slide) so that the AI can analyze piece by piece (important for long content that won’t fit in one prompt). Each content piece is annotated with its source (course and unit name) so that any findings can be traced back precisely.
+After extraction, **content normalization** occurs. This might involve splitting content into logical sections (e.g. by heading or slide) so that the AI can analyze piece by piece (important for long content that won't fit in one prompt). Each content piece is annotated with its source (course and unit name) so that any findings can be traced back precisely.
 
-The pipeline can run on a schedule (e.g. nightly or weekly) to process newly added or updated content. Additionally, it can track a “last reviewed” timestamp for each unit and prioritize those not scanned recently or known to be old (e.g. content last updated 2+ years ago might be scanned more frequently).
+The pipeline can run on a schedule (e.g. nightly or weekly) to process newly added or updated content. Additionally, it can track a "last reviewed" timestamp for each unit and prioritize those not scanned recently or known to be old (e.g. content last updated 2+ years ago might be scanned more frequently).
 
 ## AI Analysis & Automated Revision (Azure Copilot Capabilities)
 
-This is the core “Copilot” intelligence that reviews content and proposes updates. It will leverage **Azure OpenAI Service** (which provides GPT-4/GPT-3.5 models via API, the same tech behind Microsoft 365 Copilot) to perform several tasks:
+This is the core "Copilot" intelligence that reviews content and proposes updates. It will leverage **Azure OpenAI Service** (which provides GPT-4/GPT-3.5 models via API, the same tech behind Microsoft 365 Copilot) to perform several tasks:
 
-* **Language Enhancement:** The AI will proofread and improve the writing quality of the training materials. Using prompt-based instructions or Azure OpenAI’s functions, it can correct grammar and spelling, suggest clearer phrasing, and ensure consistent tone. For example, it might rewrite a convoluted sentence in a PDF handout into simpler language while preserving the meaning. This addresses the “language improvement” goal (making content easier to understand and more polished).
-* **Outdated Fact Detection:** The AI examines the content for any dated references. This includes looking for year mentions (e.g. “As of 2018,...”), version numbers (software versions, standards), or known events. To decide if something is outdated, the AI uses a couple of strategies:
+* **Language Enhancement:** The AI will proofread and improve the writing quality of the training materials. Using prompt-based instructions or Azure OpenAI's functions, it can correct grammar and spelling, suggest clearer phrasing, and ensure consistent tone. For example, it might rewrite a convoluted sentence in a PDF handout into simpler language while preserving the meaning. This addresses the "language improvement" goal (making content easier to understand and more polished).
+* **Outdated Fact Detection:** The AI examines the content for any dated references. This includes looking for year mentions (e.g. "As of 2018,..."), version numbers (software versions, standards), or known events. To decide if something is outdated, the AI uses a couple of strategies:
 
-  * *Knowledge Cutoff & Prompting:* GPT-4 has knowledge up to a certain date. We can prompt it with the current date and ask it to reason if statements might be outdated (“Given it is 2025, is any information in this text likely outdated?”). While the base model won’t have new data, this reasoning can catch obvious cases (e.g. an intro that says “next year, 2020, we expect…” clearly is outdated now).
-  * *Retrieval-Augmented Analysis:* For more factual accuracy, integrate Azure Cognitive Search or a web search API. The pipeline can automatically formulate search queries for key topics found in the content. For instance, if a course unit mentions “Windows 10”, the system queries if a newer Windows version or update exists. If the content says “the latest EU regulation is X”, it might search EU law databases or Wikipedia for newer amendments. The retrieved snippets (latest docs, articles) are then provided to GPT-4 as context. This way, the AI’s suggestions are grounded in up-to-date information – effectively using a mini internet search to fact-check the course.
-  * *Domain Knowledge Base:* Over time, the team can build an internal knowledge base of canonical facts (e.g. “current version of software Y is X”, “policy Z changed in 2024”). This could be a simple database or a file. The AI can be prompted to cross-verify content against this knowledge base (either via embedding search or explicitly retrieving the facts and including in the prompt). This reduces reliance on external search for frequently known updates in the department’s domain.
+  * *Knowledge Cutoff & Prompting:* GPT-4 has knowledge up to a certain date. We can prompt it with the current date and ask it to reason if statements might be outdated ("Given it is 2025, is any information in this text likely outdated?"). While the base model won't have new data, this reasoning can catch obvious cases (e.g. an intro that says "next year, 2020, we expect..." clearly is outdated now).
+  * *Retrieval-Augmented Analysis:* For more factual accuracy, integrate Azure Cognitive Search or a web search API. The pipeline can automatically formulate search queries for key topics found in the content. For instance, if a course unit mentions "Windows 10", the system queries if a newer Windows version or update exists. If the content says "the latest EU regulation is X", it might search EU law databases or Wikipedia for newer amendments. The retrieved snippets (latest docs, articles) are then provided to GPT-4 as context. This way, the AI's suggestions are grounded in up-to-date information – effectively using a mini internet search to fact-check the course.
+  * *Domain Knowledge Base:* Over time, the team can build an internal knowledge base of canonical facts (e.g. "current version of software Y is X", "policy Z changed in 2024"). This could be a simple database or a file. The AI can be prompted to cross-verify content against this knowledge base (either via embedding search or explicitly retrieving the facts and including in the prompt). This reduces reliance on external search for frequently known updates in the department's domain.
 * **Content Relevance & Redundancy:** The AI can flag content that is no longer relevant. For example, if two courses have overlapping modules, it might identify duplicate sections (using similarity of embeddings) – so the team can consolidate. Or if a course contains a section that is off-topic or refers to a now-retired product, the AI can suggest removing or replacing it. This helps keep the content library focused and efficient. (Machine learning can cluster content topics to find redundancies.)
 * **Automated Revision Suggestions:** For each issue detected, the AI will generate a suggested fix. This could be:
 
-  * *Rewrite Proposals:* e.g. “Replace the paragraph explaining feature X with an updated explanation reflecting version Y’s changes.” The AI would draft that new paragraph.
-  * *Factual Corrections:* e.g. “Update the stated market share from 2019 data to the latest figure from 2024 (now 55% instead of 40%).” It would provide the new data and source if possible.
+  * *Rewrite Proposals:* e.g. "Replace the paragraph explaining feature X with an updated explanation reflecting version Y's changes." The AI would draft that new paragraph.
+  * *Factual Corrections:* e.g. "Update the stated market share from 2019 data to the latest figure from 2024 (now 55% instead of 40%)." It would provide the new data and source if possible.
   * *Link Updates:* If the content has hyperlinks (perhaps to external resources or older documentation), the AI can check if those links are still valid (this could be a simple HTTP check by the pipeline). Broken or moved links are flagged, and the AI (with web search help) might find the updated link or an alternative resource.
-  * *Multilingual consistency:* In case courses are offered in multiple languages (Dutch, French, etc., given Belgium context), the AI can assist in translating updates to the other languages once the source content is updated. Azure’s models are capable of multilingual generation, but careful validation by bilingual staff would be needed.
+  * *Multilingual consistency:* In case courses are offered in multiple languages (Dutch, French, etc., given Belgium context), the AI can assist in translating updates to the other languages once the source content is updated. Azure's models are capable of multilingual generation, but careful validation by bilingual staff would be needed.
 
-**Ensuring Accuracy:** Since automatic changes carry risk, we will keep the AI in a suggestion role. However, Azure OpenAI allows deployment of content filters and guardrails. For instance, we can use the Azure OpenAI content filtering to avoid inappropriate outputs. We can also set up test prompts to verify the AI’s suggestions on known content before fully trusting it. Over time, a fine-tuned model could be trained on the department’s writing style and typical content, which might improve consistency of suggestions. In the beginning, though, leveraging prompt engineering (few-shot examples of how to identify and fix issues) will likely suffice.
+**Ensuring Accuracy:** Since automatic changes carry risk, we will keep the AI in a suggestion role. However, Azure OpenAI allows deployment of content filters and guardrails. For instance, we can use the Azure OpenAI content filtering to avoid inappropriate outputs. We can also set up test prompts to verify the AI's suggestions on known content before fully trusting it. Over time, a fine-tuned model could be trained on the department's writing style and typical content, which might improve consistency of suggestions. In the beginning, though, leveraging prompt engineering (few-shot examples of how to identify and fix issues) will likely suffice.
 
-To orchestrate these AI tasks, a framework like **Microsoft Semantic Kernel** or **LangChain** can be used. These frameworks allow chaining steps: e.g., 1) run a prompt to find outdated facts, 2) for each fact, call a web search tool, 3) feed results to another prompt that produces an updated passage. Using such orchestration frameworks can speed up development of this “copilot” logic, and they integrate well with Azure OpenAI. (Semantic Kernel, being developed by Microsoft, is designed to create custom AI copilots and could be a natural fit for integrating the Azure OpenAI model with external plugins/tools in this workflow.)
+To orchestrate these AI tasks, a framework like **Microsoft Semantic Kernel** or **LangChain** can be used. These frameworks allow chaining steps: e.g., 1) run a prompt to find outdated facts, 2) for each fact, call a web search tool, 3) feed results to another prompt that produces an updated passage. Using such orchestration frameworks can speed up development of this "copilot" logic, and they integrate well with Azure OpenAI. (Semantic Kernel, being developed by Microsoft, is designed to create custom AI copilots and could be a natural fit for integrating the Azure OpenAI model with external plugins/tools in this workflow.)
 
 ## Human Review & Content Update Workflow
 
 **Review Interface:** After the AI completes analysis on a piece of content, the results need to be presented clearly to the team. A good approach is to generate an **AI Content Report** per course (or per unit). This report can be an HTML page or a formatted email that highlights:
 
 * Sections/sentences that are potentially outdated or problematic (e.g. highlighted in red or with comments).
-* The AI’s suggested revision for each (e.g. shown side-by-side or beneath the original).
-* Sources or reasoning the AI used (for transparency), such as “(Suggested update based on \[source: Microsoft Documentation, 2025])”. Wherever the AI pulled facts from external sources, it can cite them just like this report cites sources, so the team can verify.
-* A confidence level or tag (e.g. “critical update” vs “minor style improvement”), which helps prioritize what to review first.
+* The AI's suggested revision for each (e.g. shown side-by-side or beneath the original).
+* Sources or reasoning the AI used (for transparency), such as "(Suggested update based on [source: Microsoft Documentation, 2025])". Wherever the AI pulled facts from external sources, it can cite them just like this report cites sources, so the team can verify.
+* A confidence level or tag (e.g. "critical update" vs "minor style improvement"), which helps prioritize what to review first.
 
-The team can use this report to quickly **accept, modify, or reject** each suggestion. This could be done via a simple web app interface where each suggestion has an “Apply” checkbox, or manually by the team editing the content in TalentLMS with the report as a guide. A semi-automated approach might be: the system waits a certain period for human approval (or perhaps the team clicks “Approve all safe changes” in the interface), and then pushes the updates via API.
+The team can use this report to quickly **accept, modify, or reject** each suggestion. This could be done via a simple web app interface where each suggestion has an "Apply" checkbox, or manually by the team editing the content in TalentLMS with the report as a guide. A semi-automated approach might be: the system waits a certain period for human approval (or perhaps the team clicks "Approve all safe changes" in the interface), and then pushes the updates via API.
 
 **Applying Updates:** For approved changes, the system calls the TalentLMS API to update the content. Some examples:
 
 * For a text unit, it sends the new HTML content (with changes integrated) via the update endpoint.
-* For a PDF file, if just text changes, the system could regenerate the PDF from the updated text (maybe using an automated PDF generator) and upload the new file to replace the old one in the LMS. If that’s not feasible, it at least alerts that “This PDF needs manual updating/replacement”.
-* For videos, the system cannot automatically create a new video (that would require re-recording or text-to-speech which might not match the original presenter). Instead, it might create an updated script or notes for the team to re-record that segment. In the interim, if possible, it could add an overlay text in the video (via Video Indexer’s captioning) noting the updated info, or add a note in the course description “(Update: as of 2025, XYZ has changed…)”.
+* For a PDF file, if just text changes, the system could regenerate the PDF from the updated text (maybe using an automated PDF generator) and upload the new file to replace the old one in the LMS. If that's not feasible, it at least alerts that "This PDF needs manual updating/replacement".
+* For videos, the system cannot automatically create a new video (that would require re-recording or text-to-speech which might not match the original presenter). Instead, it might create an updated script or notes for the team to re-record that segment. In the interim, if possible, it could add an overlay text in the video (via Video Indexer's captioning) noting the updated info, or add a note in the course description "(Update: as of 2025, XYZ has changed…)".
 
 Every change applied can be logged (maybe in a SharePoint or database log) with a timestamp and what changed. This creates a maintainable history and helps in compliance (so you know exactly when a course was last revised and why).
 
-Throughout this process, **clear communication with the team** is vital. The system will not silently change things in production without the team’s knowledge. Instead, it augments the team’s capabilities by handling the grunt work of finding issues and drafting updates, while the team retains control over final content. This approach aligns with a human-centered AI philosophy and ensures quality.
+Throughout this process, **clear communication with the team** is vital. The system will not silently change things in production without the team's knowledge. Instead, it augments the team's capabilities by handling the grunt work of finding issues and drafting updates, while the team retains control over final content. This approach aligns with a human-centered AI philosophy and ensures quality.
 
 ## Team Notification & Collaboration
 
 To keep the training team in the loop, the solution includes a notification workflow:
 
+* **Real-Time Alerts:** Whenever the AI flags a piece of content as *outdated/critical*, an alert can be sent. For example, if a regulation changed and the AI catches it in a policy training module, it can send a Microsoft Teams message or email to the content owner: "🔔 *AI Update Suggestion:* Course 'Data Privacy 101' has an outdated section on GDPR. Review suggested updates." This uses either an outgoing webhook to Teams or an email via Logic App. The alert contains a brief summary of the issue and a link to the detailed AI Content Report. Integrating with collaboration tools like Teams makes it easy for the team to discuss and decide on the changes.
+* **Weekly Digest:** In addition to real-time alerts, a weekly summary email can list all courses checked and actions taken. E.g. "This week the Content Copilot scanned 50 courses: 5 courses had critical updates applied, 10 had minor edits, 2 need manual attention (video updates)." This keeps management aware of the AI's impact and highlights any content that might require additional resources (like scheduling a video shoot).
 * **Real-Time Alerts:** Whenever the AI flags a piece of content as *outdated/critical*, an alert can be sent. For example, if a regulation changed and the AI catches it in a policy training module, it can send a Microsoft Teams message or email to the content owner: “🔔 *AI Update Suggestion:* Course ‘Data Privacy 101’ has an outdated section on GDPR. Review suggested updates.” This uses either an outgoing webhook to Teams or an email via Logic App. The alert contains a brief summary of the issue and a link to the detailed AI Content Report. Integrating with collaboration tools like Teams makes it easy for the team to discuss and decide on the changes.
 * **Weekly Digest:** In addition to real-time alerts, a weekly summary email can list all courses checked and actions taken. E.g. “This week the Content Copilot scanned 50 courses: 5 courses had critical updates applied, 10 had minor edits, 2 need manual attention (video updates).” This keeps management aware of the AI’s impact and highlights any content that might require additional resources (like scheduling a video shoot).
 * **Dashboard:** For a quick overview, a simple dashboard (maybe a Power BI report or web page) can show content health metrics: percentage of courses up-to-date, last review date for each, and pending updates. Over time, this can serve as a gauge of how well content maintenance is scaling.
@@ -959,7 +961,7 @@ By leveraging Azure’s security features and a robust role model in the applica
 We choose a tech stack that is modern, widely supported, and aligns well with Azure’s managed services. Below are key technologies and Azure services used, along with recommendations:
 
 * **Backend Application:** **Node.js with Express** (JavaScript/TypeScript) or **ASP.NET Core** (C#) – both are reliable choices. In this documentation, we illustrate examples with Node.js for brevity. The backend runs on **Azure App Service**, which handles deployment and scaling of the web app without managing VM servers. Azure App Service is a fully managed platform for building, deploying, and scaling web applications. It provides easy integration with Azure AD and can auto-scale to multiple instances to handle load.
-* **Frontend Application:** **React** (with TypeScript) is used to build the SPA, though Angular or Vue could be used similarly. The production build (static files) can be deployed to **Azure Static Web Apps** or served via an App Service. We prefer Azure Static Web Apps for global reach and built-in CI/CD integration from GitHub. The frontend calls the backend API securely (using OAuth tokens from Azure AD).
+* **Frontend Application:** Next.js (with TypeScript) powers the portal, enabling server-side rendering and static generation. The application is hosted in an **Azure App Service Web App** (Linux, Node.js 18) and is deployed via GitHub Actions using the `azure/webapps-deploy@v2` action. The frontend calls the Function App API securely using OAuth tokens from Azure AD.
 * **Database:** **Azure SQL Database** is used for reliable relational storage. Azure SQL provides high availability, automatic backups, and scaling up to high DTU/CPU levels as usage grows. It’s well-suited for structured data and complex queries (e.g., reporting on progress). For scenarios requiring more flexibility or massive scale, **Azure Cosmos DB** is an alternative or supplement. Cosmos DB is a fully managed NoSQL (and multi-model) database with global distribution and elastic scalability; it can be used to store course content or logs as JSON documents, or to replicate data across regions for global low-latency access.
 * **Storage for Content:** **Azure Blob Storage** stores large files (videos, images, attachments). We organize content in containers per course or content type. Blob URLs can be secured with SAS tokens if needed. For video streaming, Azure Blob Storage combined with Azure Front Door (as CDN) ensures quick delivery. Optionally, **Azure Media Services** could be used for video encoding/streaming if we needed advanced video features.
 * **AI Integration:** **Azure OpenAI Service** provides the GPT models via REST API. We deploy a GPT-4 model in Azure OpenAI and use its endpoint to generate content. This service is chosen over calling OpenAI directly to ensure data residency in Azure and enterprise compliance. Azure OpenAI supports features like content filtering and monitoring of usage. We use the `text-davinci-003` or `gpt-4` model for text generation (content and quizzes) and possibly embeddings for semantic search (if implementing a smart search or recommendation). The Azure OpenAI Service allows dynamic generation of study guides, quiz questions, and even entire lessons based on given content. (We will detail our usage patterns in the AI Integration section.)
@@ -969,7 +971,7 @@ We choose a tech stack that is modern, widely supported, and aligns well with Az
 * **Monitoring & Logging:** **Azure Application Insights** (part of Azure Monitor) is enabled in the backend for telemetry. This monitors request rates, response times, exceptions, and custom events (e.g., content generation events). It helps in diagnosing issues and measuring usage patterns. We also set up Azure Monitor alerts for certain conditions (such as error rate spikes or high CPU usage).
 * **DevOps and Deployment:** The code is managed in a source repository (e.g., GitHub or Azure DevOps Repos). CI/CD pipelines are set up to automate build and release:
 
-  * **GitHub Actions** or **Azure DevOps Pipelines** build the frontend and backend, run tests, then deploy artifacts to Azure (Static Web Apps, App Service, Functions, etc.).
+  * **GitHub Actions** or **Azure DevOps Pipelines** build the frontend and backend, run tests, then deploy artifacts to Azure (App Service Web App for the frontend, Azure Functions for the backend).
   * Infrastructure is provisioned and updated via **Infrastructure as Code** – using Azure Resource Manager templates or **Bicep**, or Terraform. For example, we have Bicep templates that define the App Service, SQL database, storage account, etc., so the infrastructure can be deployed consistently across environments (Dev, QA, Prod). Using an ARM template, we can deploy all resources in one operation for repeatable environments.
   * **Azure Key Vault** is utilized in the pipeline to retrieve secrets (like connection strings or API keys) and feed them as app settings into the deployed services, ensuring no secrets are in source control.
 * **PowerShell/CLI Integration:** For admin scripting and automation, the system relies on standard tools. PowerShell scripts use `Invoke-RestMethod` to call the LMS API (the LMS uses OAuth tokens or API keys for auth in scripts). Azure CLI or Az PowerShell modules could also be used in scripts for tasks like scaling the infrastructure or integrating with other Azure services (for example, using an Az module script to get Azure AD user info to sync into the LMS).
@@ -1457,7 +1459,7 @@ Once deployed, maintaining the LMS involves standard best practices:
 * **Scaling:** Azure App Service can auto-scale out based on rules (CPU, memory, or custom metrics). We enable auto-scale to add instances when load is high (e.g., many concurrent users during a company-wide training event). Similarly, the database can be scaled up or out (if using Azure SQL Hyperscale or sharding for multi-tenant scale).
 * **Monitoring:** We continuously monitor using Application Insights. Alerts are set (e.g., if response time exceeds 2s on average or if any dependency like OpenAI calls start failing frequently, we get notified). This allows proactive maintenance.
 * **Logging:** We aggregate logs from the App Service and Azure Functions. Azure’s logging (Log Analytics) is used. We also keep an eye on Azure OpenAI usage logs to monitor cost and performance of the AI features.
-* **Updating the Application:** New versions of the code can be deployed via CI/CD pipelines. We utilize App Service deployment slots for zero-downtime releases – e.g., deploy to a “staging” slot, run smoke tests, then swap to production slot. The frontend being static can be deployed to Azure Blob or Static Web Apps with versioned URLs if needed.
+* **Updating the Application:** New versions of the code can be deployed via CI/CD pipelines. We utilize App Service deployment slots for zero-downtime releases – e.g., deploy to a “staging” slot, run smoke tests, then swap to production slot. The frontend (Next.js portal) is built and deployed to an Azure App Service Web App using deployment slots and versioned package deployments.
 * **Database Maintenance:** Azure SQL’s automatic backups and point-in-time restore are enabled. We also use Azure SQL’s vulnerability assessment and threat detection features to keep the database secure and tuned. For Cosmos DB, we use its backup policy and monitor RU usage to adjust throughput or enable auto-scale RUs.
 * **AI Model Updates:** Azure OpenAI will periodically update the underlying models. We test our prompts with new model versions when available. If needed (for example, if a model changes behavior), we adjust prompts or add few-shot examples to maintain output quality. We also consider fine-tuning a custom model if our domain data is specific (though often prompt engineering suffices).
 * **Customization:** The LMS is built to be customizable. Organizations can white-label the frontend (change logos, colors) easily via a configuration file or theme settings. New content types or integrations can be added by developers thanks to the modular architecture (for instance, adding a new integration with GitHub to pull code examples could involve creating a new microservice or function).
@@ -1468,7 +1470,7 @@ Once deployed, maintaining the LMS involves standard best practices:
 To summarize, here are the Azure services and resources we recommend for a robust deployment, and how each is used in this LMS:
 
 * **Azure App Service (Web App)** – Hosts the Node.js or ASP.NET backend API. Provides a managed, scalable runtime for the web application. Use deployment slots and auto-scale features for high availability.
-* **Azure App Service (Static Web or CDN)** – Delivers the frontend SPA. Azure Static Web Apps is ideal for React/Angular apps, offering global distribution and integrated authentication.
+* **Azure App Service Web App** – Hosts the Next.js portal, providing a managed Linux Node.js 18 environment and CI/CD deployment via GitHub Actions (`azure/webapps-deploy@v2`). The frontend communicates securely with the Function App API using OAuth tokens from Azure AD.
 * **Azure SQL Database** – Stores relational data with full ACID compliance. Choose a tier that suits the user load (start with General Purpose tier, scale up to Business Critical or Hyperscale as needed). Use SQL’s row-level security if multi-tenant data isolation is required (or separate DB per tenant approach).
 * **Azure Cosmos DB (optional)** – If the LMS needs to store large volumes of semi-structured data (like detailed activity logs, or if designing the content store as documents), Cosmos DB is an excellent choice. It’s a fully managed NoSQL database with global replication and autoscale throughput.
 * **Azure Blob Storage** – Stores all large content (videos, PDFs, images) and serves them to users, possibly via a CDN. Use Blob lifecycle management to move older content to cooler storage tiers if appropriate (to save cost on rarely accessed content).
@@ -1525,7 +1527,7 @@ Building a modern, AI-powered LMS on Azure doesn’t have to be over-engineered.
 
 * **Alternative:**
 
-  * Vue 3 + Vite if you prefer the Vue ecosystem; nearly as simple but slightly less native integration with Azure Static Web Apps.
+  * Vue 3 + Vite if you prefer the Vue ecosystem; nearly as simple but slightly less native integration with Azure App Service Web App.
 
 ---
 
@@ -1637,7 +1639,7 @@ This gives you:
 
 ## 7. CI/CD & Hosting
 
-* **Frontend:** deploy Next.js to **Azure Static Web Apps** (built-in GitHub Actions support)
+* **Frontend:** build and deploy Next.js to Azure App Service Web App using the `azure/webapps-deploy@v2` action
 * **API:** deploy Azure Functions via GitHub Actions or Azure DevOps Pipelines
 * **Infrastructure as Code:** define your SQL DB, Cognitive Search, and Function App in Azure Bicep or Terraform
 
