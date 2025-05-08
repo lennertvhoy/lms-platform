@@ -160,4 +160,47 @@ Then ran **Remote-Containers: Rebuild Container**.
 **User Query:** `fatal: Authentication failed` due to removed password auth  
 **Action:** Enhanced `scripts/git_push.sh` to catch push failures and instruct the user to authenticate via SSH or the GitHub CLI (`gh auth login`) when HTTP password auth is not available.
 
+## 2025-05-18
+
+### 26. Simplify Dev Container Startup
+**User Query:** can you adjust the readme, once the dev container is spun up i can just start up everything by running npm run dev
+**Action:** Updated `README.md` to streamline development startup:
+- In **Quick Start**, replaced separate frontend and backend commands with a single `npm run dev`.
+- In **Local Development**, simplified the `Running Locally` section to use `npm run dev` after spinning up SQL Edge and installing dependencies.
+
+## 2025-05-19
+
+### 27. Fix Azure Functions Startup & Scaffold API Tests
+**User Query:** ok i that's good, i did npm run dev and the server is running but im getting errors and the site it just this, continue building out the server, make sure to not do things you already tried. try to replicate talentlms but better and use markdown for test
+**Action:**
+- Updated `api/functions/package.json` to use `npx azure-functions-core-tools@4` in the start script for reliable local CLI resolution.
+- Created `docs/api_tests.md` with initial markdown-based API tests for Hello, Courses, and Quiz endpoints.
+
+### 28. Modules & Enrollments Endpoints
+**User Query:** yes keep going please
+**Action:**
+- Added `Modules` function under `api/functions/Modules` supporting GET (list, single, filter by `courseId`) and POST (create module).
+- Added `Enrollments` function under `api/functions/Enrollments` supporting GET (all enrollments or by `userId`) and POST (create enrollment).
+- Updated `docs/api_tests.md` with test cases for Modules and Enrollments endpoints.
+
+### 29. Progress Endpoint
+**User Query:** keep going
+**Action:**
+- Added `Progress` function under `api/functions/Progress` supporting GET (all progress, by `userId`, by `userId` + `moduleId`) and POST (create/update progress entries).
+- Updated `docs/api_tests.md` with test cases for the Progress endpoint.
+
+### 30. Users Endpoint
+**User Query:** continue
+**Action:**
+- Created `Users` function under `api/functions/Users` with GET (list users, get by `id`) and POST (create user), handling unique email constraint.
+- Updated `docs/api_tests.md` with test cases for the Users endpoint.
+
+### 31. Course & Module Update/Delete
+**User Query:** continue
+**Action:**
+- Extended `api/functions/Courses` to handle PUT (update course fields) and DELETE (remove course) methods in `function.json` and `index.js`.
+- Added Markdown test cases in `docs/api_tests.md` for `PUT /api/courses/{id}` and `DELETE /api/courses/{id}`.
+- Extended `api/functions/Modules` to handle PUT (update module fields) and DELETE (remove module) methods in `function.json` and `index.js`.
+- Added Markdown test cases in `docs/api_tests.md` for `PUT /api/modules/{id}` and `DELETE /api/modules/{id}`.
+
 *End of development log.* 

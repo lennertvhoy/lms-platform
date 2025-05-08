@@ -5,8 +5,8 @@
       "type": "httpTrigger",
       "direction": "in",
       "name": "req",
-      "methods": ["get", "post", "put", "delete"],
-      "route": "courses/{id?}"
+      "methods": ["get", "post"],
+      "route": "users/{id?}"
     },
     {
       "type": "http",

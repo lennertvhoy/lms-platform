@@ -33,6 +33,28 @@ module.exports = async function (context, req) {
         });
         context.res = { status: 201, body: newCourse };
       }
+    } else if (req.method === 'PUT') {
+      if (!id) {
+        context.res = { status: 400, body: 'Course id is required for update' };
+      } else {
+        const { title, description, isPublished } = req.body || {};
+        const data = {};
+        if (title !== undefined) data.title = title;
+        if (description !== undefined) data.description = description;
+        if (isPublished !== undefined) data.isPublished = isPublished;
+        const updatedCourse = await prisma.course.update({
+          where: { id: parseInt(id) },
+          data
+        });
+        context.res = { status: 200, body: updatedCourse };
+      }
+    } else if (req.method === 'DELETE') {
+      if (!id) {
+        context.res = { status: 400, body: 'Course id is required for deletion' };
+      } else {
+        await prisma.course.delete({ where: { id: parseInt(id) } });
+        context.res = { status: 204 };
+      }
     } else {
       context.res = { status: 405, body: 'Method not allowed' };
     }

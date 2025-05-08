@@ -42,7 +42,9 @@ Before you begin, ensure you have the following installed:
 
 - **Docker** (for Dev Container & Azure SQL Edge)
 - **Cursor** + Remote - Containers extension
-
+- **Github-CLI** installed to authorize connection to GitHub.
+   >sudo apt install gh
+   >gh auth login
 On Azure:
 
 - An **Azure subscription**.
@@ -73,11 +75,7 @@ On Azure:
 
 4. Start development servers:
    ```bash
-   # Frontend (Next.js)
-   npm --workspace=apps/portal run dev
-
-   # Backend (Azure Functions)
-   npm --workspace=api/functions run start
+   npm run dev
    ```
 
 5. Configure environment variables:
@@ -145,11 +143,7 @@ docker-compose up -d mssql
 # Install dependencies
 npm install
 
-# Start frontend
-npm --workspace=apps/portal run dev
-
-# Start backend
-npm --workspace=api/functions run start
+npm run dev
 ```
 
 ---
