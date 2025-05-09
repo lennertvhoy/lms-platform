@@ -4,7 +4,7 @@
 
 This guide outlines a **production-ready, cost-effective workflow** for a solo developer to monitor and update training content using AI. The system will ingest various content formats (HTML, PDFs, video transcripts), analyze them with Azure OpenAI (GPT models), and suggest revisions for outdated or unclear material. A human-in-the-loop review ensures quality control, and approved changes are applied to the content with versioning. We will leverage **Cursor AI** for local development (to generate and debug code efficiently) and **GitHub Actions** for continuous integration/deployment. The solution avoids direct TalentLMS integration (due to limited API access) and instead uses custom ingestion of exported content.
 
-**Key Components:**
+**Key Components:** 
 
 1. **Local Development Environment:** Using Cursor AI in a Linux setup for rapid coding and debugging.
 2. **Azure Services Setup:** Configuring Azure OpenAI (GPT-4/GPT-3.5) and conditionally Azure Form Recognizer & Cognitive Search (with fallbacks if not available).
